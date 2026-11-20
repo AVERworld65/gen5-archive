@@ -37,3 +37,5 @@ body{background-image:repeating-conic-gradient(#eaf0e54d 0% 25%,transparent 0% 5
   .detail-hero,.parties-hero{min-height:220px}
   .hero:before{background:linear-gradient(90deg,#f1f5e9 0%,#f1f5e9f0 54%,#f1f5e985 100%)}
 }
+.pokemon-sprite{object-fit:contain;image-rendering:pixelated;max-width:100%}
+.kp-table .pokemon-sprite{vertical-align:middle;margin-inline-end:8px}

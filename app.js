@@ -24,6 +24,15 @@ function eventDate(date) {
   return node;
 }
 
+function eventMeta(event) {
+  const meta = element("div", "meta");
+  meta.append(eventDate(event.date), element("span", "rule", rules.get(event.rule)));
+  if (Number.isInteger(event.participantCount) && event.participantCount >= 0) {
+    meta.append(element("span", "date", "参加者 " + event.participantCount + "人"));
+  }
+  return meta;
+}
+
 function renderList(container) {
   const selected = document.querySelector('input[name="rule"]:checked').value;
   const matching = tournaments.filter(event => selected === "all" || event.rule === selected)
@@ -38,12 +47,29 @@ function renderList(container) {
   for (const event of matching) {
     const card = link("", "./tournament.html?id=" + encodeURIComponent(event.id), "event-card");
     const info = element("div");
-    const meta = element("div", "meta");
-    meta.append(eventDate(event.date), element("span", "rule", rules.get(event.rule)));
+    const meta = eventMeta(event);
     info.append(meta, element("h3", "", event.name));
     card.append(info, element("span", "card-action", "大会結果を見る"));
     container.append(card);
   }
+}
+
+function showPokemonName(container, name, size) {
+  container.textContent = name;
+  const filename = pokemonSpriteFiles.get(name);
+  if (!filename) return;
+
+  const image = element("img", "pokemon-sprite");
+  image.alt = "";
+  image.width = size;
+  image.height = size;
+  image.loading = "lazy";
+  image.decoding = "async";
+  image.addEventListener("error", () => image.remove(), { once: true });
+  image.src = "./image/bw/" + encodeURIComponent(filename);
+  const label = element("span", "", name);
+  container.textContent = "";
+  container.append(image, label);
 }
 
 function partyKkp(team, counts) {
@@ -57,7 +83,11 @@ function renderParty(player, team, kkp, article, rank) {
   else heading.textContent = player;
 
   const slots = element("ul", "slots");
-  for (const name of team) slots.append(element("li", "", name));
+  for (const name of team) {
+    const slot = element("li");
+    showPokemonName(slot, name, 64);
+    slots.append(slot);
+  }
 
   const extras = element("div", "party-extras");
   extras.append(element("strong", "kkp", "KKP " + (Number.isFinite(kkp) ? kkp : "—")));
@@ -80,8 +110,7 @@ function renderDetail(container, event) {
   canvas.height = 205;
   canvas.setAttribute("aria-hidden", "true");
   const copy = element("div", "hero-copy");
-  const meta = element("div", "meta");
-  meta.append(eventDate(event.date), element("span", "rule", rules.get(event.rule)));
+  const meta = eventMeta(event);
   copy.append(element("p", "eyebrow", "WHITE FOREST / GEN V"), element("h1", "", event.name), meta,
     link("出典：大会結果報告", event.source, "source"));
   hero.append(canvas, copy);
@@ -103,7 +132,8 @@ function renderDetail(container, event) {
   const body = table.createTBody();
   for (const [name, count] of [...event.kp].sort((a, b) => b[1] - a[1])) {
     const row = body.insertRow();
-    const header = element("th", "", name);
+    const header = element("th");
+    showPokemonName(header, name, 48);
     header.scope = "row";
     row.append(header, element("td", "", count));
   }
