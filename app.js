@@ -82,7 +82,7 @@ function renderDetail(container, event) {
   const copy = element("div", "hero-copy");
   const meta = element("div", "meta");
   meta.append(eventDate(event.date), element("span", "rule", rules.get(event.rule)));
-  copy.append(element("p", "eyebrow", "BLACK CITY / GEN V"), element("h1", "", event.name), meta,
+  copy.append(element("p", "eyebrow", "WHITE FOREST / GEN V"), element("h1", "", event.name), meta,
     link("出典：大会結果報告", event.source, "source"));
   hero.append(canvas, copy);
 
@@ -119,34 +119,16 @@ function renderDetail(container, event) {
   }
   parties.append(list);
   container.append(hero, jump, parties, kp);
-  drawLandscape(canvas, true);
+  drawLandscape(canvas);
 }
 
-function drawLandscape(canvas, city) {
+function drawLandscape(canvas) {
   const context = canvas.getContext("2d");
   if (!context) return;
   const rect = (color, x, y, width, height) => {
     context.fillStyle = color;
     context.fillRect(x, y, width, height);
   };
-  if (city) {
-    rect("#171931", 0, 0, 480, 205);
-    rect("#262948", 220, 86, 260, 119);
-    rect("#9294bc", 385, 22, 28, 28);
-    for (let x = 235; x < 480; x += 28) {
-      const height = 50 + (x * 9 % 85);
-      const y = 190 - height;
-      rect("#11132a", x, y, 24, height);
-      rect("#4f557b", x + 4, y + 6, 17, 2);
-      for (let floor = y + 13; floor < 185; floor += 12) {
-        rect("#888dc1", x + 5, floor, 3, 3);
-        rect("#595e90", x + 14, floor, 3, 3);
-      }
-    }
-    rect("#34385b", 220, 190, 260, 15);
-    return;
-  }
-
   rect("#dcebd2", 0, 0, 480, 205);
   rect("#e9f1d8", 210, 33, 270, 29);
   rect("#f6f7d9", 360, 23, 47, 44);
@@ -155,6 +137,12 @@ function drawLandscape(canvas, city) {
   rect("#a4c5a5", 254, 166, 226, 30);
   rect("#cbe0be", 279, 168, 37, 3);
   rect("#cbe0be", 423, 178, 34, 3);
+  // Square highlights and tufts give the clearing a visible pixel grid.
+  for (let x = 235; x < 477; x += 11) {
+    const y = 155 + (x * 13 % 46);
+    rect("#b6d1ab", x, y, 5, 2);
+    rect("#b6d1ab", x + 2, y - 2, 2, 2);
+  }
   function tree(x, y, scale, light, dark) {
     rect("#7a805f", x - 2 * scale, y - 21 * scale, 4 * scale, 21 * scale);
     rect(dark, x - 12 * scale, y - 23 * scale, 24 * scale, 9 * scale);
@@ -175,7 +163,7 @@ const events = document.querySelector("#events");
 if (events) {
   renderList(events);
   document.querySelector(".filters").addEventListener("change", () => renderList(events));
-  drawLandscape(document.querySelector("#landscape"), false);
+  drawLandscape(document.querySelector("#landscape"));
 }
 
 const detail = document.querySelector("#detail");

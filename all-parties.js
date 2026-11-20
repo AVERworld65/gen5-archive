@@ -18,10 +18,19 @@ if (allPartiesPage) {
   } else {
     document.title = "全登録パーティ | " + eventRecord.name + " | 第五世代対戦アーカイブ";
     const section = element("section", "detail-section");
-    section.append(element("p", "eyebrow", eventRecord.name), element("h1", "", "全登録パーティ"));
+    const hero = element("header", "hero parties-hero");
+    const canvas = element("canvas");
+    canvas.width = 480;
+    canvas.height = 205;
+    canvas.setAttribute("aria-hidden", "true");
+    const copy = element("div", "hero-copy");
+    copy.append(element("p", "eyebrow", eventRecord.name), element("h1", "", "全登録パーティ"));
     const meta = element("div", "meta");
     meta.append(eventDate(eventRecord.date), element("span", "rule", rules.get(eventRecord.rule)));
-    section.append(meta, element("p", "section-note", registeredParties.length + "件（KKPが多い順）"));
+    copy.append(meta, element("p", "section-note", registeredParties.length + "件（KKPが多い順）"));
+    hero.append(canvas, copy);
+    allPartiesPage.append(hero);
+    drawLandscape(canvas);
     const counts = new Map(eventRecord.kp);
     const sortedParties = registeredParties
       .map(([player, team]) => ({ player, team, kkp: partyKkp(team, counts) }))
